@@ -1,10 +1,6 @@
 package ru.gr05504.application;
 
-import ru.gr05504.domain.Calculation;
-import ru.gr05504.domain.CalculationRepository;
-import ru.gr05504.domain.FormulaParser;
-import ru.gr05504.domain.IntegrationMethod;
-import ru.gr05504.domain.Integrator;
+import ru.gr05504.domain.*;
 
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
@@ -20,7 +16,7 @@ public class CalculationService {
 
     // Разбирает формулу, вычисляет интеграл и сохраняет расчёт
     public Calculation calculate(String formula, double lower, double upper,
-                                 int intervals, IntegrationMethod method) {
+                                 int intervals, MethodRealised method) {
         DoubleUnaryOperator f = parser.parse(formula);
         double result = Integrator.integrate(f, lower, upper, intervals, method);
         Calculation calculation = new Calculation(formula, lower, upper, intervals, method, result);

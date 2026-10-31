@@ -2,7 +2,8 @@
 package ru.gr05504.ui;
 
 import ru.gr05504.domain.Calculation;
-import ru.gr05504.domain.IntegrationMethod;
+import ru.gr05504.domain.MethodRealised;
+
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface CalculatorView {
     String getLowerText();
     String getUpperText();
     String getIntervalsText();
-    IntegrationMethod getMethod();
+    MethodRealised getMethod();
     Calculation getSelected();
 
     void clearForm();
