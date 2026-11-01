@@ -10,7 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class CalculatorWindow extends JFrame implements CalculatorView {
+public class CalculatorWindow extends JFrame
+        implements CalculationFormView, CalculationListView {
 
     private final JTextField formulaField = new JTextField(20);
     private final JTextField lowerField = new JTextField(10);
