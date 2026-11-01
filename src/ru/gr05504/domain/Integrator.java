@@ -1,24 +1,48 @@
 package ru.gr05504.domain;
 
+import java.util.Objects;
 import java.util.function.DoubleUnaryOperator;
 
-// Численное вычисление определённого интеграла на отрезке [a; b] разбиением на n отрезков
 public final class Integrator {
 
-    private Integrator() { }                // утилитарный класс: экземпляры не создаём
+    private Integrator() {
+    }
 
-    public static double integrate(DoubleUnaryOperator f, double a, double b,
-                                   int n, MethodRealised method) {
-        if (!(a < b))
-            throw new IllegalArgumentException("Нижний предел должен быть меньше верхнего");
-        if (n < 1)
-            throw new IllegalArgumentException("Число отрезков должно быть не меньше 1");
+    public static double integrate(
+            DoubleUnaryOperator f,
+            double a,
+            double b,
+            int n,
+            MethodRealised method
+    ) {
+        Objects.requireNonNull(f, "Функция не задана");
+        Objects.requireNonNull(method, "Метод не выбран");
+        Objects.requireNonNull(
+                method.strategy(),
+                "Стратегия не задана"
+        );
 
-        double sum = method.strategy().integralCalculation(f, a, b, n);
+        if (!Double.isFinite(a) || !Double.isFinite(b) || a >= b) {
+            throw new IllegalArgumentException(
+                    "Некорректные пределы интегрирования"
+            );
+        }
 
-        // Разрыв или неопределённость функции на отрезке дают NaN или бесконечность
-        if (!Double.isFinite(sum))
-            throw new IllegalArgumentException("Функция не определена или не ограничена на отрезке");
-        return sum;
+        if (n < 1) {
+            throw new IllegalArgumentException(
+                    "Число отрезков должно быть не меньше 1"
+            );
+        }
+
+        double result = method.strategy()
+                .integralCalculation(f, a, b, n);
+
+        if (!Double.isFinite(result)) {
+            throw new IllegalArgumentException(
+                    "Функция не определена или не ограничена на отрезке"
+            );
+        }
+
+        return result;
     }
 }
