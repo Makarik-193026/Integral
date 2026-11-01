@@ -23,4 +23,4 @@ void main() {
             integrator
     );
     new CalculatorWindow(service).setVisible(true);
-}
+} //
