@@ -8,17 +8,23 @@ import java.util.function.DoubleUnaryOperator;
 public class CalculationService {
     private final CalculationRepository repository;
     private final FormulaParser parser;
+    private final IntegralCalculator integrator;
 
-    public CalculationService(CalculationRepository repository, FormulaParser parser) {
+    public CalculationService(
+            CalculationRepository repository,
+            FormulaParser parser,
+            IntegralCalculator integrator
+    ) {
         this.repository = repository;
         this.parser = parser;
+        this.integrator = integrator;
     }
 
     // Разбирает формулу, вычисляет интеграл и сохраняет расчёт
     public Calculation calculate(String formula, double lower, double upper,
                                  int intervals, MethodRealised method) {
         DoubleUnaryOperator f = parser.parse(formula);
-        double result = Integrator.integrate(f, lower, upper, intervals, method);
+        double result = integrator.integrate(f, lower, upper, intervals, method);
         Calculation calculation = new Calculation(formula, lower, upper, intervals, method, result);
         repository.save(calculation);
         return calculation;

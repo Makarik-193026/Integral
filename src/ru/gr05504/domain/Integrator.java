@@ -3,34 +3,38 @@ package ru.gr05504.domain;
 import java.util.Objects;
 import java.util.function.DoubleUnaryOperator;
 
-public final class Integrator {
+public class Integrator implements IntegralCalculator {
 
-    private Integrator() {
-    }
-
-    public static double integrate(
+    @Override
+    public double integrate(
             DoubleUnaryOperator f,
             double a,
             double b,
             int n,
             MethodRealised method
     ) {
-        Objects.requireNonNull(f, "Функция не задана");
-        Objects.requireNonNull(method, "Метод не выбран");
+        Objects.requireNonNull(f, "Функция не должна быть null");
+        Objects.requireNonNull(method, "Метод интегрирования не должен быть null");
         Objects.requireNonNull(
                 method.strategy(),
-                "Стратегия не задана"
+                "Стратегия интегрирования не должна быть null"
         );
 
-        if (!Double.isFinite(a) || !Double.isFinite(b) || a >= b) {
+        if (!Double.isFinite(a) || !Double.isFinite(b)) {
             throw new IllegalArgumentException(
-                    "Некорректные пределы интегрирования"
+                    "Границы интегрирования должны быть конечными числами"
+            );
+        }
+
+        if (a >= b) {
+            throw new IllegalArgumentException(
+                    "Левая граница должна быть меньше правой"
             );
         }
 
         if (n < 1) {
             throw new IllegalArgumentException(
-                    "Число отрезков должно быть не меньше 1"
+                    "Количество интервалов должно быть положительным"
             );
         }
 
@@ -38,8 +42,8 @@ public final class Integrator {
                 .integralCalculation(f, a, b, n);
 
         if (!Double.isFinite(result)) {
-            throw new IllegalArgumentException(
-                    "Функция не определена или не ограничена на отрезке"
+            throw new ArithmeticException(
+                    "Результат интегрирования не является конечным числом"
             );
         }
 
