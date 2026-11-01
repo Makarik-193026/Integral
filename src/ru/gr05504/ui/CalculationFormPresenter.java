@@ -50,4 +50,4 @@ public class CalculationFormPresenter {
             throw new IllegalArgumentException(fieldName + ": введите целое число");
         }
     }
-}
+}//

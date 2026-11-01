@@ -6,4 +6,4 @@ public interface CalculationRepository {
     void save(Calculation calculation);
     void delete(Calculation calculation);
     List<Calculation> findAll();
-}
+}//

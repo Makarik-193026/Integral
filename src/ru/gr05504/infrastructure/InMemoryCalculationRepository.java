@@ -23,4 +23,4 @@ public class InMemoryCalculationRepository implements CalculationRepository {
     public List<Calculation> findAll() {
         return List.copyOf(calculations);   // копия: внешний код не меняет хранилище
     }
-}
+}//

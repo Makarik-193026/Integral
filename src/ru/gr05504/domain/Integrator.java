@@ -51,4 +51,4 @@ public final class Integrator {
             throw new IllegalArgumentException("Функция не определена или не ограничена на отрезке");
         return sum;
     }
-}
+}//

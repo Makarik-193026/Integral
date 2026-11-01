@@ -7,4 +7,4 @@ import java.util.function.DoubleUnaryOperator;
 // При ошибке разбора бросает IllegalArgumentException
 public interface FormulaParser {
     DoubleUnaryOperator parse(String formula);
-}
+}//

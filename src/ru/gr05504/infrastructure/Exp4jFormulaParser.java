@@ -32,4 +32,4 @@ public class Exp4jFormulaParser implements FormulaParser {
             throw new IllegalArgumentException("Не удалось вычислить формулу в точке x = " + x, ex);
         }
     }
-}
+}//

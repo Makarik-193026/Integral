@@ -15,4 +15,4 @@ public enum IntegrationMethod {
     public String toString() {
         return label;                       // так название показывается в JComboBox
     }
-}
+}//

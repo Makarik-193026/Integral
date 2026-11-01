@@ -30,4 +30,4 @@ public class CalculationListPresenter {
         service.delete(calculation);
         refresh();
     }
-}
+}//

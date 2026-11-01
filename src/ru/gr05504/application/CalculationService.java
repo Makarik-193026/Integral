@@ -35,4 +35,4 @@ public class CalculationService {
     public List<Calculation> getAll() {
         return repository.findAll();
     }
-}
+}//

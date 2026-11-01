@@ -111,4 +111,4 @@ public class CalculatorWindow extends JFrame implements CalculatorView {
     public void showError(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
-}
+}//

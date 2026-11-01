@@ -29,4 +29,4 @@ public class Calculation {
     public int getIntervals()             { return intervals; }
     public IntegrationMethod getMethod()  { return method; }
     public double getResult()             { return result; }
-}
+}//
