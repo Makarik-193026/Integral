@@ -1,8 +1,8 @@
 package ru.gr05504.domain;
 
-import ru.gr05504.domain.MidpointRectangleStrategy;
-import ru.gr05504.domain.SimpsonStrategy;
-import ru.gr05504.domain.TrapezoidStrategy;
+import ru.gr05504.domain.strategy.MidpointRectangleStrategy;
+import ru.gr05504.domain.strategy.SimpsonStrategy;
+import ru.gr05504.domain.strategy.TrapezoidStrategy;
 
 import java.util.List;
 

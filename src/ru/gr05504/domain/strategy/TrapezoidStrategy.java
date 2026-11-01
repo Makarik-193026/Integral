@@ -1,4 +1,4 @@
-package ru.gr05504.domain;
+package ru.gr05504.domain.strategy;
 
 import ru.gr05504.domain.IntegratorStrategy;
 
