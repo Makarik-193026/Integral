@@ -1,7 +1,6 @@
 // ui/CalculatorWindow.java
 package ru.gr05504.ui;
 
-import ru.gr05504.application.CalculationService;
 import ru.gr05504.domain.Calculation;
 import ru.gr05504.domain.ManyMethods;
 import ru.gr05504.domain.MethodRealised;
@@ -23,19 +22,28 @@ public class CalculatorWindow extends JFrame
     private final DefaultListModel<Calculation> listModel = new DefaultListModel<>();
     private final JList<Calculation> calculationList = new JList<>(listModel);
 
-    private final CalculationFormPresenter formPresenter;
-    private final CalculationListPresenter listPresenter;
+    private CalculationFormPresenter formPresenter;
+    private CalculationListPresenter listPresenter;
 
-    public CalculatorWindow(CalculationService service) {
-        this.formPresenter = new CalculationFormPresenter(this, service);
-        this.listPresenter = new CalculationListPresenter(this, service);
+    private final CalculationDescriptionFormatter formatter =
+            new CalculationDescriptionFormatter();
 
+    public CalculatorWindow() {
         setTitle("Определённый интеграл");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         buildLayout();
         setSize(760, 480);
         setLocationRelativeTo(null);
-        listPresenter.start();
+    }
+
+    public void setPresenters(
+            CalculationFormPresenter formPresenter,
+            CalculationListPresenter listPresenter
+    ) {
+        this.formPresenter = formPresenter;
+        this.listPresenter = listPresenter;
+
+        this.listPresenter.start();
     }
 
     private void buildLayout() {
@@ -68,7 +76,7 @@ public class CalculatorWindow extends JFrame
                                                           int index, boolean selected,
                                                           boolean hasFocus) {
                 super.getListCellRendererComponent(list, value, index, selected, hasFocus);
-                setText(describe((Calculation) value));
+                setText(formatter.format((Calculation) value));
                 return this;
             }
         });
@@ -79,15 +87,7 @@ public class CalculatorWindow extends JFrame
         deleteButton.addActionListener(e -> listPresenter.deleteSelected());
     }
 
-    // Строка списка: параметры решения и ответ
-    private String describe(Calculation c) {
-        return "f(x) = " + c.getFormula()
-                + " | [" + String.format("%.4f", c.getLower())
-                + "; " + String.format("%.4f", c.getUpper()) + "]"
-                + " | " + c.getMethod()
-                + " | n = " + c.getIntervals()
-                + " | I = " + String.format("%.8f", c.getResult());
-    }
+
 
     @Override public String getFormula()            { return formulaField.getText(); }
     @Override public String getLowerText()          { return lowerField.getText(); }

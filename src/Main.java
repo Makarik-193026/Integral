@@ -2,25 +2,47 @@ import ru.gr05504.domain.CalculationRepository;
 import ru.gr05504.domain.FormulaParser;
 import ru.gr05504.domain.IntegralCalculator;
 import ru.gr05504.domain.Integrator;
+
 import ru.gr05504.infrastructure.InMemoryCalculationRepository;
 import ru.gr05504.infrastructure.Exp4jFormulaParser;
+
 import ru.gr05504.application.CalculationService;
+
 import ru.gr05504.ui.CalculatorWindow;
+import ru.gr05504.ui.CalculationFormPresenter;
+import ru.gr05504.ui.CalculationListPresenter;
+
+import javax.swing.SwingUtilities;
 
 void main() {
-    CalculationRepository repository =
-            new InMemoryCalculationRepository();
+    SwingUtilities.invokeLater(() -> {
 
-    FormulaParser parser =
-            new Exp4jFormulaParser();
+        CalculationRepository repository =
+                new InMemoryCalculationRepository();
 
-    IntegralCalculator integrator =
-            new Integrator();
+        FormulaParser parser =
+                new Exp4jFormulaParser();
 
-    CalculationService service = new CalculationService(
-            repository,
-            parser,
-            integrator
-    );
-    new CalculatorWindow(service).setVisible(true);
-} //
+        IntegralCalculator integrator =
+                new Integrator();
+
+        CalculationService service =
+                new CalculationService(
+                        repository,
+                        parser,
+                        integrator
+                );
+
+        CalculatorWindow window = new CalculatorWindow();
+
+        CalculationFormPresenter formPresenter =
+                new CalculationFormPresenter(window, service);
+
+        CalculationListPresenter listPresenter =
+                new CalculationListPresenter(window, service);
+
+        window.setPresenters(formPresenter, listPresenter);
+
+        window.setVisible(true);
+    });
+}
