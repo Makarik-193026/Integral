@@ -13,23 +13,36 @@ public class SimpsonStrategy implements IntegratorStrategy {
             double b,
             int n
     ) {
-        if (n % 2 != 0) {
-            throw new IllegalArgumentException(
-                    "Для метода Симпсона число отрезков должно быть чётным"
-            );
-        }
-
         double h = (b - a) / n;
 
-        double sum = f.applyAsDouble(a) + f.applyAsDouble(b);
+        // Если количество отрезков нечётное,
+        // последний отрезок вычисляем методом трапеций
+        int simpsonIntervals = (n % 2 == 0) ? n : n - 1;
 
-        for (int i = 1; i < n; i++) {
+        double sum = f.applyAsDouble(a)
+                + f.applyAsDouble(a + simpsonIntervals * h);
+
+        for (int i = 1; i < simpsonIntervals; i++) {
             double weight = (i % 2 == 1) ? 4 : 2;
             double x = a + i * h;
 
             sum += weight * f.applyAsDouble(x);
         }
 
-        return sum * h / 3;
+        double result = sum * h / 3;
+
+        // Для нечётного n добавляем последний отрезок
+        // по формуле метода трапеций
+        if (n % 2 != 0) {
+            double x = a + simpsonIntervals * h;
+            double nextX = b;
+
+            result += h * (
+                    f.applyAsDouble(x) +
+                            f.applyAsDouble(nextX)
+            ) / 2;
+        }
+
+        return result;
     }
 }
