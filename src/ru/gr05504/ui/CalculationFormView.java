@@ -1,6 +1,6 @@
 package ru.gr05504.ui;
 
-import ru.gr05504.domain.MethodRealised;
+import ru.gr05504.domain.metods.MethodRealised;
 
 public interface CalculationFormView {
 

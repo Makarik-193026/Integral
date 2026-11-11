@@ -1,7 +1,7 @@
 import ru.gr05504.domain.CalculationRepository;
 import ru.gr05504.domain.FormulaParser;
-import ru.gr05504.domain.IntegralCalculator;
-import ru.gr05504.domain.Integrator;
+import ru.gr05504.domain.integrators.IntegralCalculator;
+import ru.gr05504.domain.integrators.Integrator;
 
 import ru.gr05504.infrastructure.InMemoryCalculationRepository;
 import ru.gr05504.infrastructure.Exp4jFormulaParser;

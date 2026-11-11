@@ -1,6 +1,6 @@
 package ru.gr05504.domain.strategy;
 
-import ru.gr05504.domain.IntegratorStrategy;
+import ru.gr05504.domain.integrators.IntegratorStrategy;
 
 import java.util.function.DoubleUnaryOperator;
 

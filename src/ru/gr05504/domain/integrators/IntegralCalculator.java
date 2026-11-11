@@ -1,4 +1,6 @@
-package ru.gr05504.domain;
+package ru.gr05504.domain.integrators;
+
+import ru.gr05504.domain.metods.MethodRealised;
 
 import java.util.function.DoubleUnaryOperator;
 

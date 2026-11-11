@@ -2,8 +2,8 @@
 package ru.gr05504.ui;
 
 import ru.gr05504.domain.Calculation;
-import ru.gr05504.domain.ManyMethods;
-import ru.gr05504.domain.MethodRealised;
+import ru.gr05504.domain.metods.ManyMethods;
+import ru.gr05504.domain.metods.MethodRealised;
 
 import javax.swing.*;
 import java.awt.*;

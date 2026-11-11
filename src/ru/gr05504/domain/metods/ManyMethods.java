@@ -1,4 +1,4 @@
-package ru.gr05504.domain;
+package ru.gr05504.domain.metods;
 
 import ru.gr05504.domain.strategy.MidpointRectangleStrategy;
 import ru.gr05504.domain.strategy.SimpsonStrategy;

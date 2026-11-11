@@ -1,9 +1,10 @@
 package ru.gr05504.ui;
 
+import ru.gr05504.application.CalculationObserver;
 import ru.gr05504.application.CalculationService;
 import ru.gr05504.domain.Calculation;
 
-public class CalculationListPresenter {
+public class CalculationListPresenter implements CalculationObserver {
 
     private final CalculationListView view;
     private final CalculationService service;
@@ -17,6 +18,16 @@ public class CalculationListPresenter {
     }
 
     public void start() {
+        service.addObserver(this);
+        refresh();
+    }
+
+    public void stop() {
+        service.removeObserver(this);
+    }
+
+    @Override
+    public void onCalculationsChanged() {
         refresh();
     }
 
@@ -33,6 +44,5 @@ public class CalculationListPresenter {
         }
 
         service.delete(calculation);
-        refresh();
     }
 }
