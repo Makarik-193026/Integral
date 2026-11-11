@@ -8,5 +8,9 @@ public interface CalculationListView {
     Calculation getSelected();
 
     void showCalculations(List<Calculation> calculations);
+
+    void setDeleteEnabled(boolean enabled);
+    void setUndoEnabled(boolean enabled);
+
     void showError(String message);
 }

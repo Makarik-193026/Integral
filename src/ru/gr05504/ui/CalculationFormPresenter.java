@@ -1,22 +1,27 @@
-
 package ru.gr05504.ui;
 
 import ru.gr05504.application.CalculationService;
+import ru.gr05504.application.command.CalculateCommand;
+import ru.gr05504.application.command.CommandHistory;
 
 public class CalculationFormPresenter {
 
     private final CalculationFormView view;
     private final CalculationService service;
+    private final CommandHistory commandHistory;
 
     public CalculationFormPresenter(
             CalculationFormView view,
-            CalculationService service
+            CalculationService service,
+            CommandHistory commandHistory
     ) {
         this.view = view;
         this.service = service;
+        this.commandHistory = commandHistory;
+
+        updateCalculateAvailability();
     }
 
-    // Возвращает true, если расчёт выполнен и сохранён
     public boolean calculateClicked() {
         try {
             String formula = view.getFormula().trim();
@@ -39,7 +44,8 @@ public class CalculationFormPresenter {
                     view.getIntervalsText(), "Число отрезков"
             );
 
-            service.calculate(
+            CalculateCommand command = new CalculateCommand(
+                    service,
                     formula,
                     lower,
                     upper,
@@ -47,12 +53,61 @@ public class CalculationFormPresenter {
                     view.getMethod()
             );
 
+            if (!command.canExecute()) {
+                throw new IllegalArgumentException(
+                        "Проверьте введённые данные"
+                );
+            }
+
+            commandHistory.executeCommand(command);
+
             view.clearForm();
+            updateCalculateAvailability();
+            updateUndoAvailability();
+
             return true;
 
         } catch (IllegalArgumentException ex) {
             view.showError(ex.getMessage());
+            updateCalculateAvailability();
             return false;
+        }
+    }
+
+    public void updateCalculateAvailability() {
+        try {
+            String formula = view.getFormula();
+
+            if (formula == null || formula.isBlank()) {
+                view.setCalculateEnabled(false);
+                return;
+            }
+
+            double lower = parseNumber(
+                    view.getLowerText(), "Нижний предел"
+            );
+
+            double upper = parseNumber(
+                    view.getUpperText(), "Верхний предел"
+            );
+
+            int intervals = parseInteger(
+                    view.getIntervalsText(), "Число отрезков"
+            );
+
+            CalculateCommand command = new CalculateCommand(
+                    service,
+                    formula.trim(),
+                    lower,
+                    upper,
+                    intervals,
+                    view.getMethod()
+            );
+
+            view.setCalculateEnabled(command.canExecute());
+
+        } catch (IllegalArgumentException ex) {
+            view.setCalculateEnabled(false);
         }
     }
 
@@ -88,5 +143,19 @@ public class CalculationFormPresenter {
                     fieldName + ": введите целое число"
             );
         }
+    }
+    public void undoLast() {
+        if (!commandHistory.canUndo()) {
+            return;
+        }
+
+        commandHistory.undoLast();
+
+        updateUndoAvailability();
+        updateCalculateAvailability();
+    }
+
+    private void updateUndoAvailability() {
+        view.setUndoEnabled(commandHistory.canUndo());
     }
 }

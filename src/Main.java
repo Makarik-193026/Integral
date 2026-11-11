@@ -7,6 +7,7 @@ import ru.gr05504.infrastructure.InMemoryCalculationRepository;
 import ru.gr05504.infrastructure.Exp4jFormulaParser;
 
 import ru.gr05504.application.CalculationService;
+import ru.gr05504.application.command.CommandHistory;
 
 import ru.gr05504.ui.CalculatorWindow;
 import ru.gr05504.ui.CalculationFormPresenter;
@@ -33,13 +34,23 @@ void main() {
                         integrator
                 );
 
+        CommandHistory commandHistory = new CommandHistory();
+
         CalculatorWindow window = new CalculatorWindow();
 
         CalculationFormPresenter formPresenter =
-                new CalculationFormPresenter(window, service);
+                new CalculationFormPresenter(
+                        window,
+                        service,
+                        commandHistory
+                );
 
         CalculationListPresenter listPresenter =
-                new CalculationListPresenter(window, service);
+                new CalculationListPresenter(
+                        window,
+                        service,
+                        commandHistory
+                );
 
         window.setPresenters(formPresenter, listPresenter);
 

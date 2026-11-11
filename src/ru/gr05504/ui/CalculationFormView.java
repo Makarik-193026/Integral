@@ -11,6 +11,10 @@ public interface CalculationFormView {
 
     MethodRealised getMethod();
 
+    void setCalculateEnabled(boolean enabled);
+
+    void setUndoEnabled(boolean enabled);
+
     void clearForm();
     void showError(String message);
 }

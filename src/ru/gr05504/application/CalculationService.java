@@ -75,9 +75,28 @@ public class CalculationService {
         notifyObservers();
     }
 
+    public void restore(Calculation calculation) {
+        repository.save(calculation);
+        notifyObservers();
+    }
+
     public List<Calculation> getAll() {
         return repository.findAll();
     }
+
+    public boolean isFormulaValid(String formula) {
+        if (formula == null || formula.isBlank()) {
+            return false;
+        }
+
+        try {
+            parser.parse(formula);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
 }
 
 
