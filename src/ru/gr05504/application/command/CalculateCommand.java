@@ -85,4 +85,9 @@ public class CalculateCommand implements Command {
             calculation = null;
         }
     }
+
+    public Calculation getCalculation() {
+        return calculation;
+    }
+
 }

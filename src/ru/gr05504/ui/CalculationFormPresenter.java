@@ -4,7 +4,12 @@ import ru.gr05504.application.CalculationService;
 import ru.gr05504.application.command.CalculateCommand;
 import ru.gr05504.application.command.CommandHistory;
 import ru.gr05504.domain.FunctionDefinition;
+import ru.gr05504.ui.report.CalculationReportCreator;
+import ru.gr05504.ui.report.ShortReportCreator;
+import ru.gr05504.ui.report.DetailedReportCreator;
+import ru.gr05504.ui.report.ReportTypeDialog;
 
+import javax.swing.JOptionPane;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -57,7 +62,43 @@ public class CalculationFormPresenter {
                 );
             }
 
+            // Открываем окно выбора типа отчёта
+            ReportTypeDialog dialog = new ReportTypeDialog(null);
+            String reportType = dialog.showDialog();
+
+            // Если пользователь отменил выбор
+            if (reportType == null) {
+                return false;
+            }
+
+            // Выполняем команду
             commandHistory.executeCommand(command);
+
+            // Выбираем конкретного создателя отчёта
+            CalculationReportCreator creator;
+
+            if (reportType.equals("Краткий отчёт")) {
+                creator = new ShortReportCreator();
+            } else if (reportType.equals("Подробный отчёт")) {
+                creator = new DetailedReportCreator();
+            } else {
+                throw new IllegalArgumentException(
+                        "Неизвестный тип отчёта"
+                );
+            }
+
+            // Формируем отчёт через фабричный метод
+            String reportText = creator.generateReport(
+                    command.getCalculation()
+            );
+
+            // Показываем отчёт
+            JOptionPane.showMessageDialog(
+                    null,
+                    reportText,
+                    "Результат вычисления",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
 
             view.clearForm();
             updateCalculateAvailability();
@@ -87,6 +128,7 @@ public class CalculationFormPresenter {
             int intervals = parseInteger(
                     view.getIntervalsText(), "Число отрезков"
             );
+
 
             CalculateCommand command = new CalculateCommand(
                     definition,
@@ -138,10 +180,7 @@ public class CalculationFormPresenter {
             return parameters;
         }
 
-        String[] entries
-
-
-                = text.split("[,;]");
+        String[] entries = text.split("[,;]");
 
         for (String entry : entries) {
             String[] parts = entry.trim().split("=");
@@ -221,3 +260,5 @@ public class CalculationFormPresenter {
         view.setUndoEnabled(commandHistory.canUndo());
     }
 }
+
+
