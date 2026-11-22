@@ -12,6 +12,7 @@ public class Calculation {
     private final int intervals;
     private final String method;
     private final double result;
+    private final long elapsedNanoTime;
 
     // Старый конструктор оставляем для совместимости
     public Calculation(
@@ -28,11 +29,12 @@ public class Calculation {
                 upper,
                 intervals,
                 method,
-                result
+                result,
+                0
         );
     }
 
-    // Новый конструктор принимает результат Builder
+    // Прежний конструктор Builder тоже оставляем
     public Calculation(
             FunctionDefinition functionDefinition,
             double lower,
@@ -41,12 +43,34 @@ public class Calculation {
             MethodRealised method,
             double result
     ) {
+        this(
+                functionDefinition,
+                lower,
+                upper,
+                intervals,
+                method,
+                result,
+                0
+        );
+    }
+
+    // Новый конструктор сохраняет время вычисления
+    public Calculation(
+            FunctionDefinition functionDefinition,
+            double lower,
+            double upper,
+            int intervals,
+            MethodRealised method,
+            double result,
+            long elapsedNanoTime
+    ) {
         this.functionDefinition = functionDefinition;
         this.lower = lower;
         this.upper = upper;
         this.intervals = intervals;
         this.method = method.toString();
         this.result = result;
+        this.elapsedNanoTime = elapsedNanoTime;
     }
 
     public FunctionDefinition getFunctionDefinition() {
@@ -83,5 +107,9 @@ public class Calculation {
 
     public double getResult() {
         return result;
+    }
+
+    public long getElapsedNanoTime() {
+        return elapsedNanoTime;
     }
 }

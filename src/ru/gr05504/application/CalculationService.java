@@ -2,6 +2,7 @@ package ru.gr05504.application;
 
 import ru.gr05504.domain.*;
 import ru.gr05504.domain.integrators.IntegralCalculator;
+import ru.gr05504.domain.integrators.IntegrationResult;
 import ru.gr05504.domain.metods.MethodRealised;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class CalculationService {
     ) {
         DoubleUnaryOperator function = parser.parse(definition);
 
-        double result = integrator.integrate(
+        IntegrationResult integrationResult = integrator.integrateWithTiming(
                 function,
                 lower,
                 upper,
@@ -79,7 +80,8 @@ public class CalculationService {
                 upper,
                 intervals,
                 method,
-                result
+                integrationResult.value(),
+                integrationResult.elapsedNanoTime()
         );
 
         repository.save(calculation);
@@ -121,4 +123,3 @@ public class CalculationService {
         }
     }
 }
-

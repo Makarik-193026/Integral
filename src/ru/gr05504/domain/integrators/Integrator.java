@@ -1,11 +1,14 @@
 package ru.gr05504.domain.integrators;
 
 import ru.gr05504.domain.metods.MethodRealised;
+import ru.gr05504.domain.strategy.TimedIntegrationStrategy;
 
 import java.util.Objects;
 import java.util.function.DoubleUnaryOperator;
 
 public class Integrator implements IntegralCalculator {
+
+    private TimedIntegrationStrategy lastTimedStrategy;
 
     @Override
     public double integrate(
@@ -15,40 +18,51 @@ public class Integrator implements IntegralCalculator {
             int n,
             MethodRealised method
     ) {
+        return integrateWithTiming(f, a, b, n, method).value();
+    }
+
+    @Override
+    public IntegrationResult integrateWithTiming(
+            DoubleUnaryOperator f,
+            double a,
+            double b,
+            int n,
+            MethodRealised method
+    ) {
         Objects.requireNonNull(f, "Функция не должна быть null");
         Objects.requireNonNull(method, "Метод интегрирования не должен быть null");
-        Objects.requireNonNull(
-                method.strategy(),
-                "Стратегия интегрирования не должна быть null"
-        );
 
         if (!Double.isFinite(a) || !Double.isFinite(b)) {
-            throw new IllegalArgumentException(
-                    "Границы интегрирования должны быть конечными числами"
-            );
+            throw new IllegalArgumentException("Пределы интегрирования должны быть конечными");
         }
 
         if (a >= b) {
-            throw new IllegalArgumentException(
-                    "Левая граница должна быть меньше правой"
-            );
+            throw new IllegalArgumentException("Нижний предел должен быть меньше верхнего");
         }
 
         if (n < 1) {
-            throw new IllegalArgumentException(
-                    "Количество интервалов должно быть положительным"
-            );
+            throw new IllegalArgumentException("Количество интервалов должно быть не меньше 1");
         }
 
-        double result = method.strategy()
-                .integralCalculation(f, a, b, n);
+        lastTimedStrategy = new TimedIntegrationStrategy(method.strategy());
+
+        double result = lastTimedStrategy.integralCalculation(f, a, b, n);
 
         if (!Double.isFinite(result)) {
-            throw new ArithmeticException(
-                    "Результат интегрирования не является конечным числом"
-            );
+            throw new ArithmeticException("Результат интегрирования не является конечным числом");
         }
 
-        return result;
+        return new IntegrationResult(
+                result,
+                lastTimedStrategy.getElapsedNanoTime()
+        );
+    }
+
+    public long getElapsedNanoTime() {
+        if (lastTimedStrategy == null) {
+            return 0;
+        }
+
+        return lastTimedStrategy.getElapsedNanoTime();
     }
 }
