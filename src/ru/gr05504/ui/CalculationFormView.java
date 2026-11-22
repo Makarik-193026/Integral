@@ -5,6 +5,9 @@ import ru.gr05504.domain.metods.MethodRealised;
 public interface CalculationFormView {
 
     String getFormula();
+    String getVariable();
+    String getParametersText();
+
     String getLowerText();
     String getUpperText();
     String getIntervalsText();

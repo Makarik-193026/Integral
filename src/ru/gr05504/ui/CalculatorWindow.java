@@ -14,6 +14,9 @@ public class CalculatorWindow extends JFrame
         implements CalculationFormView, CalculationListView {
 
     private final JTextField formulaField = new JTextField(20);
+    private final JTextField variableField = new JTextField("x", 10);
+    private final JTextField parametersField = new JTextField(20);
+
     private final JTextField lowerField = new JTextField(10);
     private final JTextField upperField = new JTextField(10);
     private final JTextField intervalsField = new JTextField("100", 10);
@@ -24,7 +27,6 @@ public class CalculatorWindow extends JFrame
     private final JButton calculateButton = new JButton("Вычислить");
     private final JButton deleteButton = new JButton("Удалить");
     private final JButton undoButton = new JButton("Отменить");
-
 
     private final DefaultListModel<Calculation> listModel =
             new DefaultListModel<>();
@@ -44,7 +46,7 @@ public class CalculatorWindow extends JFrame
 
         buildLayout();
 
-        setSize(760, 480);
+        setSize(760, 560);
         setLocationRelativeTo(null);
     }
 
@@ -62,10 +64,16 @@ public class CalculatorWindow extends JFrame
     }
 
     private void buildLayout() {
-        JPanel form = new JPanel(new GridLayout(5, 2, 5, 5));
+        JPanel form = new JPanel(new GridLayout(7, 2, 5, 5));
 
         form.add(new JLabel("Формула f(x):"));
         form.add(formulaField);
+
+        form.add(new JLabel("Переменная:"));
+        form.add(variableField);
+
+        form.add(new JLabel("Параметры (имя=значение):"));
+        form.add(parametersField);
 
         form.add(new JLabel("Нижний предел a:"));
         form.add(lowerField);
@@ -111,23 +119,20 @@ public class CalculatorWindow extends JFrame
 
         // Обновление доступности кнопки при вводе текста
         addDocumentListener(formulaField);
+        addDocumentListener(variableField);
+        addDocumentListener(parametersField);
         addDocumentListener(lowerField);
         addDocumentListener(upperField);
         addDocumentListener(intervalsField);
 
-        // Обновление при выборе метода
         methodBox.addActionListener(e -> updateCalculateAvailability());
 
-        // Обновление при выборе расчёта
         calculationList.addListSelectionListener(
                 e -> updateDeleteAvailability()
         );
 
         calculateButton.addActionListener(e -> {
-            if (formPresenter.calculateClicked()
-
-
-            ) {
+            if (formPresenter.calculateClicked()) {
                 updateCalculateAvailability();
             }
         });
@@ -182,6 +187,16 @@ public class CalculatorWindow extends JFrame
     }
 
     @Override
+    public String getVariable() {
+        return variableField.getText();
+    }
+
+    @Override
+    public String getParametersText() {
+        return parametersField.getText();
+    }
+
+    @Override
     public String getLowerText() {
         return lowerField.getText();
     }
@@ -224,6 +239,8 @@ public class CalculatorWindow extends JFrame
     @Override
     public void clearForm() {
         formulaField.setText("");
+        variableField.setText("x");
+        parametersField.setText("");
         lowerField.setText("");
         upperField.setText("");
     }

@@ -3,6 +3,10 @@ package ru.gr05504.ui;
 import ru.gr05504.application.CalculationService;
 import ru.gr05504.application.command.CalculateCommand;
 import ru.gr05504.application.command.CommandHistory;
+import ru.gr05504.domain.FunctionDefinition;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CalculationFormPresenter {
 
@@ -24,13 +28,7 @@ public class CalculationFormPresenter {
 
     public boolean calculateClicked() {
         try {
-            String formula = view.getFormula().trim();
-
-            if (formula.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "Введите формулу, например sin(x)"
-                );
-            }
+            FunctionDefinition definition = createDefinition();
 
             double lower = parseNumber(
                     view.getLowerText(), "Нижний предел"
@@ -45,8 +43,8 @@ public class CalculationFormPresenter {
             );
 
             CalculateCommand command = new CalculateCommand(
+                    definition,
                     service,
-                    formula,
                     lower,
                     upper,
                     intervals,
@@ -76,12 +74,7 @@ public class CalculationFormPresenter {
 
     public void updateCalculateAvailability() {
         try {
-            String formula = view.getFormula();
-
-            if (formula == null || formula.isBlank()) {
-                view.setCalculateEnabled(false);
-                return;
-            }
+            FunctionDefinition definition = createDefinition();
 
             double lower = parseNumber(
                     view.getLowerText(), "Нижний предел"
@@ -96,8 +89,8 @@ public class CalculationFormPresenter {
             );
 
             CalculateCommand command = new CalculateCommand(
+                    definition,
                     service,
-                    formula.trim(),
                     lower,
                     upper,
                     intervals,
@@ -109,6 +102,74 @@ public class CalculationFormPresenter {
         } catch (IllegalArgumentException ex) {
             view.setCalculateEnabled(false);
         }
+    }
+
+    private FunctionDefinition createDefinition() {
+        String formula = view.getFormula();
+
+        if (formula == null || formula.isBlank()) {
+            throw new IllegalArgumentException("Введите формулу");
+        }
+
+        String variable = view.getVariable();
+
+        if (variable == null || variable.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Введите переменную интегрирования"
+            );
+        }
+
+        FunctionDefinition.Builder builder = FunctionDefinition
+                .builder(formula.trim())
+                .variable(variable.trim());
+
+        Map<String, Double> parameters =
+                parseParameters(view.getParametersText());
+
+        parameters.forEach(builder::parameter);
+
+        return builder.build();
+    }
+
+    private Map<String, Double> parseParameters(String text) {
+        Map<String, Double> parameters = new LinkedHashMap<>();
+
+        if (text == null || text.isBlank()) {
+            return parameters;
+        }
+
+        String[] entries
+
+
+                = text.split("[,;]");
+
+        for (String entry : entries) {
+            String[] parts = entry.trim().split("=");
+
+            if (parts.length != 2
+                    || parts[0].isBlank()
+                    || parts[1].isBlank()) {
+                throw new IllegalArgumentException(
+                        "Параметры вводятся в формате a=3, b=5"
+                );
+            }
+
+            String name = parts[0].trim();
+
+            if (parameters.containsKey(name)) {
+                throw new IllegalArgumentException(
+                        "Параметр " + name + " указан несколько раз"
+                );
+            }
+
+            double value = parseNumber(
+                    parts[1], "Значение параметра " + name
+            );
+
+            parameters.put(name, value);
+        }
+
+        return parameters;
     }
 
     private double parseNumber(String text, String fieldName) {
@@ -144,6 +205,7 @@ public class CalculationFormPresenter {
             );
         }
     }
+
     public void undoLast() {
         if (!commandHistory.canUndo()) {
             return;

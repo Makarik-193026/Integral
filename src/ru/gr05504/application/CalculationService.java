@@ -26,26 +26,21 @@ public class CalculationService {
         this.integrator = integrator;
     }
 
-    // Подписка наблюдателя
     public void addObserver(CalculationObserver observer) {
-        if (observer != null && !observers.contains(observer)) {
-            observers.add(observer);
-        }
+        observers.add(observer);
     }
 
-    // Отписка наблюдателя
     public void removeObserver(CalculationObserver observer) {
         observers.remove(observer);
     }
 
-    // Уведомление всех наблюдателей
     private void notifyObservers() {
-        for (CalculationObserver observer : List.copyOf(observers)) {
+        for (CalculationObserver observer : observers) {
             observer.onCalculationsChanged();
         }
     }
 
-    // Разбирает формулу, вычисляет интеграл и сохраняет расчёт
+    // Старый метод оставляем для совместимости
     public Calculation calculate(
             String formula,
             double lower,
@@ -53,18 +48,41 @@ public class CalculationService {
             int intervals,
             MethodRealised method
     ) {
-        DoubleUnaryOperator f = parser.parse(formula);
+        FunctionDefinition definition = FunctionDefinition
+                .builder(formula)
+                .build();
+
+        return calculate(definition, lower, upper, intervals, method);
+    }
+
+    // Новый метод принимает объект, созданный Builder
+    public Calculation calculate(
+            FunctionDefinition definition,
+            double lower,
+            double upper,
+            int intervals,
+            MethodRealised method
+    ) {
+        DoubleUnaryOperator function = parser.parse(definition);
 
         double result = integrator.integrate(
-                f, lower, upper, intervals, method
+                function,
+                lower,
+                upper,
+                intervals,
+                method
         );
 
         Calculation calculation = new Calculation(
-                formula, lower, upper, intervals, method, result
+                definition,
+                lower,
+                upper,
+                intervals,
+                method,
+                result
         );
 
         repository.save(calculation);
-
         notifyObservers();
 
         return calculation;
@@ -85,18 +103,22 @@ public class CalculationService {
     }
 
     public boolean isFormulaValid(String formula) {
-        if (formula == null || formula.isBlank()) {
-            return false;
-        }
-
         try {
             parser.parse(formula);
             return true;
-        } catch (IllegalArgumentException ex) {
+        } catch (RuntimeException exception) {
             return false;
         }
     }
 
+    // Проверка формулы вместе с переменной и параметрами
+    public boolean isFormulaValid(FunctionDefinition definition) {
+        try {
+            parser.parse(definition);
+            return true;
+        } catch (RuntimeException exception) {
+            return false;
+        }
+    }
 }
-
 
